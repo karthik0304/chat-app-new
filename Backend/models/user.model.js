@@ -2,7 +2,12 @@ import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
 
-    fullName:{
+    firstName:{
+        type:String,
+        required:true,
+        trim:true,
+    },
+    lastName:{
         type:String,
         required:true,
         trim:true,
@@ -22,7 +27,7 @@ const userSchema = new mongoose.Schema({
         required:true,
         enum:["Male" ,"Female" ,"Others"],
     },
-    proficePic:{
+    profilePic:{
         type:String,
         default:"",
     }
