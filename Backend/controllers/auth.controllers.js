@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import User from "../models/user.model.js";
 import bcrypt from 'bcryptjs';
+import generateTokenAndSetCookie from "../utils/generateToken.js";
 
 export const signup= async(req,res)=>{
     try{
@@ -20,8 +21,9 @@ export const signup= async(req,res)=>{
         }
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = bcrypt.hashSync(password , salt);
+
         const userprofilePic = `https://api.dicebear.com/5.x/initials/svg?seed=${firstName}%20${lastName}` ;
-        console.log(userprofilePic);
+
         const newUser = new User({
             firstName,
             lastName,
@@ -32,6 +34,7 @@ export const signup= async(req,res)=>{
         })
 
         if(newUser){
+            generateTokenAndSetCookie(newUser ,res);
             await newUser.save();
             res.status(200).json({
                 success:true,
