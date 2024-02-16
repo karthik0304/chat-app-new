@@ -56,14 +56,41 @@ export const signup= async(req,res)=>{
 
 
 
-export const login=(req,res)=>{
-    console.log("login");
-    res.send("login");
+export const login= async(req,res)=>{
+    try{
+        const { username , password} = req.body ;
+        const user = await User.findOne({username}) ;
+        const isPasswordCorrect = await bcrypt.compare(password , user?.password || "");
+
+        if(!user , !isPasswordCorrect){
+            return res.status(400).json({error:"invalid username or password"});
+        }
+
+        generateTokenAndSetCookie(user._id , res);
+
+        res.status(200).json({
+            success:true ,
+            data:user
+        })
+    }catch(error){
+        res.status(201).json({
+            success:false,
+            message:error,
+        })
+    }
+
 }
 
 
 
 export const logout=(req,res)=>{
-    console.log("logout");
-    res.send("logout");
+   try {
+    res.cookie('jwt' , "" ,{maxAge:"0"})
+    res.status(200).json("logout sucessfully")
+   }catch(error){
+    res.status(201).json({
+        success:false,
+        message:error,
+    })
+}
 }
